@@ -20,10 +20,11 @@ CURRENT_SCREEN_MODE := 7
 # MAXMOD_SOUNDBANK contains a directory of music and sound effect files
 #---------------------------------------------------------------------------------
 UNIVERSAL	:=	../../universal
+SOUND_SOURCE	:=	../../romsel_dsimenutheme/arm9/source
 TARGET		:=	romsel_aktheme
 BUILD		:=	build
 SOURCES		:=	source source/graphics source/tool source/common $(UNIVERSAL)/arm9/source $(UNIVERSAL)/source/common $(UNIVERSAL)/source/flashcard $(UNIVERSAL)/source/nds_loader $(UNIVERSAL)/source/launch $(UNIVERSAL)/source/tonccpy $(UNIVERSAL)/source/lodepng $(UNIVERSAL)/sdmmc/arm9/source
-INCLUDES	:=	include source $(UNIVERSAL)/include $(UNIVERSAL)/arm9/include $(UNIVERSAL)/sdmmc/arm9/include
+INCLUDES	:=	include source $(UNIVERSAL)/include $(UNIVERSAL)/arm9/include $(UNIVERSAL)/sdmmc/arm9/include $(SOUND_SOURCE)
 DATA		:=	../data  
 GRAPHICS	:=  ../gfx
 
@@ -46,7 +47,7 @@ LDFLAGS	=	-specs=../$(UNIVERSAL)/arm9/ds_arm9_twlm.specs -g $(ARCH) -Wl,-Map,$(n
 #---------------------------------------------------------------------------------
 # any extra libraries we wish to link with the project (order is important)
 #---------------------------------------------------------------------------------
-LIBS	:= 	-lfat -lnds9
+LIBS	:= 	-lfat -lmm9 -lnds9
  
  
 #---------------------------------------------------------------------------------
@@ -68,12 +69,16 @@ export AUDIOFILES	:=	$(foreach dir,$(notdir $(wildcard $(MUSIC)/*.*)),$(CURDIR)/
 
 export VPATH	:=	$(foreach dir,$(SOURCES),$(CURDIR)/$(dir)) \
 					$(foreach dir,$(DATA),$(CURDIR)/$(dir)) \
-					$(foreach dir,$(GRAPHICS),$(CURDIR)/$(dir))
+					$(foreach dir,$(GRAPHICS),$(CURDIR)/$(dir)) \
+					$(CURDIR)/$(SOUND_SOURCE) $(CURDIR)/$(SOUND_SOURCE)/graphics \
+					$(CURDIR)/$(SOUND_SOURCE)/tool
 
 export DEPSDIR	:=	$(CURDIR)/$(BUILD)
 
 CFILES		:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.c)))
 CPPFILES	:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.cpp)))
+CPPFILES	+=	sound.cpp themefilenames.cpp
+CFILES		+=	streamingaudio.c adpcm-xq.c adpcm-lib.c
 BMPFILES	:=	$(foreach dir,$(GRAPHICS),$(notdir $(wildcard $(dir)/*.bmp)))
 PNGFILES	:=	$(foreach dir,$(GRAPHICS),$(notdir $(wildcard $(dir)/*.png)))
 SFILES		:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.s)))

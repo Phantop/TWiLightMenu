@@ -30,6 +30,7 @@
 #include "common/nds_loader_arm9.h"
 #include "DSpicoLauncher.h"
 #include "fileBrowse.h"
+#include "sound.h"
 #include "perGameSettings.h"
 #include "errorScreen.h"
 #include "esrbSplash.h"
@@ -923,7 +924,9 @@ void customSleep() {
 
 void bgOperations(bool waitFrame) {
 	if ((keysHeld() & KEY_LID) && ms().sleepMode) {
+		snd().stopStream();
 		customSleep();
+		snd().beginStream();
 	}
 	checkSdEject();
 	drawTime();
@@ -935,6 +938,7 @@ void bgOperations(bool waitFrame) {
 	if (waitFrame) {
 		swiWaitForVBlank();
 	}
+	snd().updateStream();
 }
 
 //---------------------------------------------------------------------------------
@@ -1255,9 +1259,14 @@ int akTheme(void) {
 		updateText(false);
 	}
 
+	snd().loadStream(false);
+	snd().beginStream();
+
 	while (1) {
 		if (startMenu) {
 			// Launch DS Classic Menu
+			snd().fadeOutStream();
+			snd().stopStream();
 			fadeType = false;	// Fade to white
 			for (int i = 0; i < 25; i++) {
 				swiWaitForVBlank();
@@ -1297,6 +1306,8 @@ int akTheme(void) {
 		// Launch the item
 
 		if (applaunch) {
+			snd().fadeOutStream();
+			snd().stopStream();
 			// Delete previously used DSiWare of flashcard from SD
 			if (access("sd:/_nds/TWiLightMenu/tempDSiWare.dsi", F_OK) == 0) {
 				remove("sd:/_nds/TWiLightMenu/tempDSiWare.dsi");

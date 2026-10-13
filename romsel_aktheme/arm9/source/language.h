@@ -2,6 +2,11 @@
 #ifndef DSIMENUPP_LANGUAGE_H
 #define DSIMENUPP_LANGUAGE_H
 
+#include <string>
+
+// Used by the shared DSi music loader while converting theme music.
+extern std::string STR_PREPARING_MUSIC;
+
 /**
  * Initialize translations.
  * Uses the language ID specified in settings.ui.language.

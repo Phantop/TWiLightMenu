@@ -28,6 +28,7 @@
 
 ---------------------------------------------------------------------------------*/
 #include <nds.h>
+#include <maxmod7.h>
 #include <string.h>
 #include "common/isPhatCheck.h"
 #include "common/arm7status.h"
@@ -190,6 +191,8 @@ int main() {
 
 	my_touchInit();
 	fifoInit();
+	mmInstall(FIFO_MAXMOD);
+	installSoundFIFO();
 
 	SetYtrigger(80);
 
